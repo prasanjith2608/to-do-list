@@ -9,6 +9,14 @@ router.get("/", auth, async (req, res) => {
   res.json(tasks);
 });
 
+// GET all tasks
+router.get("/", async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks);
+});
+
+module.exports = router;
+
 // Create new task
 router.post("/", auth, async (req, res) => {
   const newTask = new Task({
