@@ -18,8 +18,13 @@ export default function Login() {
         body: JSON.stringify(form),
       });
 
+      // ✅ Check status before parsing JSON
+      if (!res.ok) {
+        const errorText = await res.text(); // fallback if not JSON
+        throw new Error(errorText || "Login failed");
+      }
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.msg || "Login failed");
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.user.username);
@@ -55,4 +60,3 @@ export default function Login() {
     </div>
   );
 }
-
