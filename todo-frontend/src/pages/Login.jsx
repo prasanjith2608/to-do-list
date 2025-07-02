@@ -18,13 +18,22 @@ export default function Login() {
         body: JSON.stringify(form),
       });
 
-      // ✅ Check status before parsing JSON
+      // ✅ Safely check if response is JSON
+      const contentType = res.headers.get("content-type") || "";
+
       if (!res.ok) {
-        const errorText = await res.text(); // fallback if not JSON
-        throw new Error(errorText || "Login failed");
+        if (contentType.includes("application/json")) {
+          const data = await res.json();
+          throw new Error(data.msg || "Login failed");
+        } else {
+          const text = await res.text();
+          throw new Error(text || "Login failed");
+        }
       }
 
-      const data = await res.json();
+      const data = contentType.includes("application/json")
+        ? await res.json()
+        : {};
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.user.username);
