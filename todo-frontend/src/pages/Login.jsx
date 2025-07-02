@@ -1,31 +1,34 @@
 import { useState } from "react";
 
+// ✅ Use environment variable for backend URL
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.msg || "Login failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || "Login failed");
 
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("username", data.user.username);
-    alert("✅ Login successful!");
-    window.location.href = "/";
-  } catch (err) {
-    alert("❌ " + err.message);
-  }
-};
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.user.username);
+      alert("✅ Login successful!");
+      window.location.href = "/";
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -52,3 +55,4 @@ const handleSubmit = async (e) => {
     </div>
   );
 }
+
